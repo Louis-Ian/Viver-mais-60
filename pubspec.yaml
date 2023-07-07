@@ -91,9 +91,9 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: true
   adaptive_icon_background: "#D29CF8"
-  adaptive_icon_foreground: "#D29CF8"
+  adaptive_icon_foreground: "lib/assets/image.jpeg"
   ios: true
   image_path: "lib/assets/image.jpeg"
   min_sdk_android: 21 # android min sdk min:16, default 21
