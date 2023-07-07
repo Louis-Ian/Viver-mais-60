@@ -54,13 +54,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _incrementCounter() {
+  bool _isListPageSelected = false;
+
+  void setPageSelected(bool selected) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
+      _isListPageSelected = selected;
     });
   }
 
@@ -78,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.orangeAccent,
           child: Center(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               // Column is also a layout widget. It takes a list of children and
               // arranges them vertically. By default, it sizes itself to fit its
               // children horizontally, and tries to be as tall as its parent.
@@ -94,10 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 const Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -120,7 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox(height: 16),
                           SizedBox(
@@ -129,56 +131,30 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
                               children: [
-                                HorizontalListViewButton(
-                                    title: "Medicações", isSelected: true),
+                                GestureDetector(
+                                  onTap: () => setPageSelected(true),
+                                  child: HorizontalListViewButton(
+                                      title: "Medicações",
+                                      isSelected: _isListPageSelected),
+                                ),
                                 const SizedBox(width: 12),
-                                HorizontalListViewButton(
-                                    title: "Direitos do idoso"),
+                                GestureDetector(
+                                  onTap: () => setPageSelected(false),
+                                  child: HorizontalListViewButton(
+                                      title: "Direitos do idoso",
+                                      isSelected: !_isListPageSelected),
+                                ),
                                 const SizedBox(width: 12),
                                 HorizontalListViewButton(title: "Compromissos"),
+                                const SizedBox(width: 12),
+                                HorizontalListViewButton(title: "Diário"),
                               ],
                             ),
                           ),
                           const SizedBox(height: 24),
-                          const Text(
-                            'Suas medicações',
-                            style: TextStyle(
-                                fontSize: 28, fontWeight: FontWeight.w900),
-                          ),
-                          const SizedBox(height: 24),
-                          Scrollable(
-                            viewportBuilder: (context, position) => ListView(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              clipBehavior: Clip.antiAlias,
-                              children: [
-                                MedicationItem(
-                                  title: "Losartana",
-                                  description: "1 comprimido 2x dia",
-                                  horario1: "07hr",
-                                  horario2: "19hr",
-                                ),
-                                const SizedBox(height: 18),
-                                MedicationItem(title: "Alendronato de Sódio",
-                                  description: "1 comprimido 1x semana",
-                                  horario1: "Sex - 07hr",),
-                                const SizedBox(height: 18),
-                                MedicationItem(title: "Dipirona",
-                                  description: "1 comprimido 1x dia",
-                                  horario1: "09hr",),
-                                const SizedBox(height: 18),
-                                MedicationItem(title: "Losartana",
-                                  description: "1 comprimido 2x ao dia",
-                                  horario1: "10hr",
-                                  horario2: "22hr",),
-                                const SizedBox(height: 18),
-                                MedicationItem(title: "Losartana",
-                                  description: "1 comprimido 2x ao dia",
-                                  horario1: "07hr",
-                                  horario2: "14hr",),
-                              ],
-                            ),
-                          )
+                          _isListPageSelected
+                              ? const MedicationList()
+                              : const RightsDescription()
                         ],
                       ),
                     ),
@@ -189,6 +165,59 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class MedicationList extends StatelessWidget {
+  const MedicationList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'Suas medicações',
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          height: 320,
+          padding: const EdgeInsets.only(bottom: 8),
+          child: ListView(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            clipBehavior: Clip.antiAlias,
+            children: [
+              MedicationItem(
+                title: "Losartana",
+                description: "1 comprimido 2x dia",
+                horario1: "07hr",
+                horario2: "19hr",
+              ),
+              const SizedBox(height: 18),
+              MedicationItem(
+                title: "Alendronato de Sódio",
+                description: "1 comprimido 1x semana",
+                horario1: "Sex - 07hr",
+              ),
+              const SizedBox(height: 18),
+              MedicationItem(
+                title: "Dipirona",
+                description: "1 comprimido 1x dia",
+                horario1: "09hr",
+              ),
+              const SizedBox(height: 18),
+              MedicationItem(
+                title: "Omoprazol",
+                description: "1 comprimido 1x dia",
+                horario1: "10hr",
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -223,6 +252,7 @@ class MedicationItem extends StatelessWidget {
           width: 12,
         ),
         Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -231,6 +261,7 @@ class MedicationItem extends StatelessWidget {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
             ),
             Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -241,13 +272,14 @@ class MedicationItem extends StatelessWidget {
                 Row(
                   children: [
                     Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           "Horário: $horario1",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w500),
                         ),
-                        if(horario2.isNotEmpty)
+                        if (horario2.isNotEmpty)
                           Text(
                             "Horário: $horario2",
                             style: const TextStyle(
@@ -255,7 +287,9 @@ class MedicationItem extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const SizedBox(width: 12,),
+                    const SizedBox(
+                      width: 12,
+                    ),
                     const Icon(Icons.alarm_rounded)
                   ],
                 ),
@@ -268,7 +302,57 @@ class MedicationItem extends StatelessWidget {
   }
 }
 
-class HorizontalListViewButton extends StatelessWidget {
+class RightsDescription extends StatelessWidget {
+  const RightsDescription({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'Seus direitos',
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          height: 320,
+          padding: const EdgeInsets.only(bottom: 10),
+          child: ListView(
+            clipBehavior: Clip.antiAlias,
+            shrinkWrap: true,
+            children: const [
+              Text(
+                """§1o Agarantia de prioridade compreende: (Redaçãodada pela Lei no 13.466, de 2017)
+              
+I – atendimento preferencial imediato e individualizado junto aos órgãos públicos e privados prestadores de serviços à população;
+
+II – preferência na formulação e na execução de políticas sociais públicas específicas;
+
+III – destinação privilegiada de recursos públicos nas áreas relacionadas com a proteção à pessoa idosa; (Redação dada pela Lei no 14.423, de 2022)
+
+IV – viabilização de formas alternativas de participação, ocupação e convívio da pessoa idosa com as demais gerações; (RedaçãodadapelaLeino14.423,de2022)
+
+V – priorização do atendimento da pessoa idosa por sua própria família, em detrimento do atendimento asilar, exceto dos que não a possuam ou careçam de condições de manutenção da própria sobrevivência; (Redação dada pela Lei no 14.423, de 2022)
+
+VI – capacitação e reciclagem dos recursos humanos nas áreas de geriatria e gerontologia e na prestação de serviços às pessoas idosas; (Redação dada pela Lei no 14.423, de 2022)
+
+VII – estabelecimento de mecanismos que favoreçam a divulgação de informações de caráter educativo sobre os aspectos biopsicossociais de envelhecimento;
+
+VIII – garantia de acesso à rede de serviços de saúde e de assistência social locais.
+
+IX – prioridade no recebimento da restituição do Imposto de Renda. (Incluído pela Lei no 11.765, de 2008).""",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class HorizontalListViewButton extends StatefulWidget {
   final String title;
   bool isSelected = false;
 
@@ -276,16 +360,22 @@ class HorizontalListViewButton extends StatelessWidget {
       {super.key, required this.title, this.isSelected = false});
 
   @override
+  State<HorizontalListViewButton> createState() =>
+      _HorizontalListViewButtonState();
+}
+
+class _HorizontalListViewButtonState extends State<HorizontalListViewButton> {
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isSelected ? Colors.orangeAccent : Colors.white,
+        color: widget.isSelected ? Colors.orangeAccent : Colors.white,
         borderRadius: const BorderRadius.all(Radius.circular(24)),
         border: Border.all(width: 2, color: Colors.black),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
       child: Text(
-        title,
+        widget.title,
         style: const TextStyle(
             fontSize: 24, fontWeight: FontWeight.w400, color: Colors.black),
       ),
